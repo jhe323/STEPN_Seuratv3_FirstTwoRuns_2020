@@ -13,7 +13,8 @@ setwd(workspace)
 filt <- readRDS("./Combined/Combined_FUS1_scRNASeq_Seurat.rds")
 
 ### Isolate C110rf95RELA-expressing clusters ###
-Tumor<-filt[,"C110rf95RELA">0]
+Tumor<-filt[,WhichCells(filt,expression = C110rf95RELA > 1.5)]
+Tumor$seurat_clusters->Tumor$orig.cluster
 
 ### Scale data ###
 ScaleData(Tumor)->Tumor

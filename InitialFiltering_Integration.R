@@ -22,7 +22,7 @@ setwd(Run1)
 Read10X(data.dir="./filtered_feature_bc_matrix/")->r1
 r1<-CreateSeuratObject(counts=r1,project="STEPN_Run1",min.cells=3,min.features=200)
 setwd(Run2)
-Read10X(data.dir="./filtered_feature_bc_matrix/")->r2
+Read10X(data.dir="../filtered_feature_bc_matrix/")->r2
 r2<-CreateSeuratObject(counts=r2,project="STEPN_Run2",min.cells=3,min.features=200)
 
 ### Note: Depending on how many cells you sequenced, these objects may get pretty large (>1 gb) and slow down computation###

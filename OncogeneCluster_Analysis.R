@@ -13,7 +13,7 @@ setwd(workspace)
 filt <- readRDS("./Combined/Combined_FUS1_scRNASeq_Seurat.rds")
 
 ### Isolate C110rf95RELA-expressing clusters ###
-Onc<-filt[,"cluster"=0]
+Onc<-subset(filt,subset=seurat_clusters==0)
 
 ### Scale data ###
 ScaleData(Onc)->Onc
@@ -64,19 +64,19 @@ pdf('Onc_FeaturePlot.pdf')
 FeaturePlot(Onc, features= c("C110rf95RELA","Lhx2","Piezo1"))
 
 ### Identify marker genes and append info about gene descriptions ###
-Onc_markers <- FindAllMarkers(Onc, only.pos = TRUE)
+Onc_markers <- FindAllMarkers(Onc, only.pos = FALSE)
 Onc_mart <- useDataset("mmusculus_gene_ensembl", useMart(biomart = "ENSEMBL_MART_ENSEMBL"))
 Onc_genes <- Onc_markers$gene
 Onc_descriptions <- getBM(attributes = c("external_gene_name", "description"), values = Onc_genes, mart=Onc_mart)
 Onc_out <- merge(as.data.frame(Onc_markers), Onc_descriptions, by.x= "gene", by.y = "external_gene_name")
-write.csv(Onc_out, file = "./onc_markers.csv")
+write.csv(Onc_out, file = "./onc_markers_ALL.csv")
 
 ### Identify the top 20 genes that distinguish a given cluster ###
 Onc_top20 <- Onc_markers %>% group_by(cluster) %>% top_n(n = 20, wt = avg_logFC)
 Onc_genes <- Onc_top20$gene
 Onc_top20descriptions <- getBM(attributes = c("external_gene_name", "description"),values=Onc_genes,mart=Onc_mart)
 Onc_top20out <- merge(as.data.frame(Onc_top20), Onc_descriptions, by.x= "gene", by.y="external_gene_name",all.x=TRUE)
-write.csv(Onc_top20out, file = "./Onc_top20_markers.csv")
+write.csv(Onc_top20out, file = "./Onc_top20_markers_ALL.csv")
 
 ### Make a heatmap with the top marker genes from each cluster ###
 pdf('onc_top20genes_heatmap.pdf')
